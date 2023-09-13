@@ -12,7 +12,7 @@
          </a>
         <div class="col-9 text-end">
             {% if user.is_authenticated and user.is_superuser %}
-                <a href="{% url 'add_item' %}" class="btn btn-primary me-3">Add New Item</a>
+                <a href="{% url 'add_item' %}" class="btn btn-primary me-3">Add New Item!</a>
             {% endif %}
             {% if user.is_authenticated %}
                 <a href="{% url 'cart_items' %}" class="text-decoration-none">
