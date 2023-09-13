@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: supcase-statefulset
+spec:
+  replicas: 0
+  serviceName: supcase-service
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-container
+          image: ivanadimitrova/finalprojectkiii
+          ports:
+            - containerPort: 80
