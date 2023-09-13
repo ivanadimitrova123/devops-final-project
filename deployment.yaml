@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: supcase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: ivanadimitrova/finalprojectkiii:latest
+          ports:
+            - containerPort: 80 
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: credentials
+type: Opaque
+data:
+  DB_USER: cG9zdGdyZXM=
+  DB_PASSWORD: SXZhbmE=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: supcase-service
+spec:
+  selector:
+    app: supcase
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: supcase-ingress
+spec:
+  rules:
+    - host: supcase.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: supcase-service
+                port:
+                  number: 80
